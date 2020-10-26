@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Home Display</title>
+    <style>
+      * {         
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        color: black;
+      }
+
+      body {
+        background-color: black;
+      }
+
+      #panel {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background-color: white;
+        width: 880px;
+        height: 528px;
+      }
+
+      #date {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        text-align: left;
+        font-size: 24px;
+      }
+
+      #time {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        text-align: right;
+        font-size: 40pt;
+      }
+
+      .box {
+        position: absolute;
+        border-radius: 10px;
+        padding: 0px;        
+        border: 2px solid black
+      }
+      
+      #forecast {
+        left: 10px;
+        top: 10px;
+        width: 200px;
+        height: 200px;
+      }
+
+      #forecast-icon {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        text-align: right;
+        font-size: 44pt;
+      }
+
+      #forecast-temperature {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        text-align: right;
+        font-size: 44pt;
+      }
+
+      #forecast-description {
+        position: absolute;
+        left: 10px;
+        top: 100px;
+        text-align: left;
+        font-size: 16pt;
+        font-weight: bold;
+      }
+
+      #forecast-rain {
+        position: absolute;
+        left: 10px;
+        top: 125px;
+        text-align: left;
+        font-size: 14pt;
+        color: red;
+      }
+
+      #indoor-climate {
+        right: 10px;
+        top: 10px;
+        width: 200px;
+        height: 200px;
+      }
+
+      </style>
+  </head>
+  <body>
+    <div id="panel">
+      <div id="date">Thursday, October 22nd, 2020</div>
+      <div id="time">22:30</div>
+      <div class="box" id="forecast">
+        <div id="forecast-icon">&#x1F324;</div>
+        <div id="forecast-temperature">15°</div>
+        <div id="forecast-description">Cloudy</div>
+        <div id="forecast-rain">80% chance of rain</div>
+      </div>
+      <div class="box" id="indoor-climate">
+      </div>
+    </body>
+</html>
