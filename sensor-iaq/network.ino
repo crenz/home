@@ -1,7 +1,8 @@
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include <ESP8266mDNS.h>
 #include <MQTT.h>
+#include <ESP8266HTTPClient.h>
 
 enum TNetworkStatus {
   NS_DISCONNECTED,
@@ -12,9 +13,11 @@ enum TNetworkStatus {
 TNetworkStatus networkWiFiStatus = NS_DISCONNECTED;
 TNetworkStatus networkMqttStatus = NS_DISCONNECTED;
 
-WiFiClient wifi;
+BearSSL::WiFiClientSecure wifi;
 MQTTClient mqtt(1024);
+HTTPClient http;
 char mqttClientId[100];
+char mqttFingerprint[] = "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00";
 
 void networkConnectWiFi() {
     if (WiFi.status() == WL_CONNECTED) {
@@ -50,7 +53,7 @@ void networkConnectMqtt() {
             msgln("MQTT", "Connection established");
             networkMqttStatus = NS_CONNECTED;
             mqtt.onMessage(networkMqttMessageReceived);
-            mqtt.subscribe("/config/" + String(idString));
+            mqtt.subscribe("config/" + String(idString));
         }
         return;
     }
@@ -61,13 +64,29 @@ void networkConnectMqtt() {
         return;
     }
 
+    msgln("MQTT", "Updating fingerprint from " + String(mqttFingerprintUrl));  
+    http.begin(mqttFingerprintUrl);
+    int httpCode = http.GET();
+    if (httpCode == 200) {
+        String payload = http.getString();
+        msgln("MQTT", "Received payload '" + payload + "'");
+        if (payload.length() > sizeof(mqttFingerprint)) {
+            payload = payload.substring(payload.length() - sizeof(mqttFingerprint));
+        }
+        payload.toCharArray(mqttFingerprint, sizeof(mqttFingerprint));
+        msgln("MQTT", "Received fingerprint '" + String(mqttFingerprint) + "'");
+        wifi.setFingerprint(mqttFingerprint);
+    } else {
+        wifi.setFingerprint("");
+    }
+
     if (networkMqttStatus == NS_CONNECTED) {
         msgln("MQTT", "Detected disconnect, reconnecting to " + String(mqttBroker));
     } else {
         msgln("MQTT", "Connecting to broker " + String(mqttBroker));      
     }
 
-    // Connect necessary
+    // Connect necessary    
     networkMqttStatus = NS_CONNECTING;
     mqtt.connect(mqttClientId, mqttUser, mqttPassword);
 }
@@ -82,7 +101,9 @@ void networkMqttMessageReceived(String &topic, String &payload) {
 void networkMqttPublish(String topic, String payload) {
     msgln("MQTT", "Publishing MQTT message on topic '" + topic + "'");
 
-    mqtt.publish(topic, payload);
+    if (!mqtt.publish(topic, payload)) {
+        msgln("MQTT", "Publishing MQTT message failed!");      
+    }
 }
 
 void networkSetup() {
@@ -96,7 +117,7 @@ void networkSetup() {
     msgln("Network", "ID/host name: " + String(idString));
 
     sprintf(mqttClientId, "%s-%06x", idString, random(256*256*256));
-    mqtt.begin(mqttBroker, wifi);
+    mqtt.begin(mqttBroker, mqttPort, wifi);
     msgln("MQTT", "Cient ID: " + String(mqttClientId));
   
     networkConnectWiFi();

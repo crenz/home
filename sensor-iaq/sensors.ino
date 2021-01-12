@@ -34,7 +34,7 @@ void sensorsSend() {
 
     serializeJson(doc, output);
 
-    networkMqttPublish("/sensors/" + String(idString), output);
+    networkMqttPublish("sensor/" + String(idString), output);
 }
 
 
