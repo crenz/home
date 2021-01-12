@@ -4,3 +4,7 @@
 sensor-iaq/credentials.h
 sensor-epd/credentials.h
 sensor-epd/sensor-epd.ino.adafruit.bin
+display-loader/
+loader/
+epd-loader/node_modules/
+epd-loader/.eslintrc.json
