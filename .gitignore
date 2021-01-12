@@ -2,3 +2,5 @@
 .DS_Store
 .vscode/launch.json
 sensor-iaq/credentials.h
+sensor-epd/credentials.h
+sensor-epd/sensor-epd.ino.adafruit.bin
