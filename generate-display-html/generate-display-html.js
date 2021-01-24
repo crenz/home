@@ -24,16 +24,35 @@ function updateDateTime() {
 
 }
 
+var mqttBroker = process.env.MQTT_URL || 'mqtt://mqtt.example.com:1883';
+var mqttUsername = process.env.MQTT_USER || '';
+var mqttPassword = process.env.MQTT_PASS || '';
 
-
-var client = mqtt.connect('mqtt://samson.web42.com');
+var client = mqtt.connect(mqttBroker, {
+    username: mqttUsername,
+    password: mqttPassword
+});
 
 client.on('connect', function () {
-    client.subscribe('/location/f41/#', function (err) {
+    console.log('Connected to broker');
+    client.subscribe('location/f41/#', function (err) {
         if (err) {
-            console.log('Error subscribing: ' + err.toString);
+            console.log('Error subscribing: ' + err.toString());
         }
     });
+});
+
+client.on('reconnect', function () {
+    console.log('Reconnected to broker');
+    client.subscribe('location/f41/#', function (err) {
+        if (err) {
+            console.log('Error subscribing: ' + err.toString());
+        }
+    });
+});
+
+client.on('error', function (err) {
+    console.log('Error connecting to broker: ' + err.toString());
 });
 
 client.on('message', function (topic, message) {

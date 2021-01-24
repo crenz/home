@@ -16,7 +16,14 @@ var httpOptions = {
     }
 };
 
-var client = mqtt.connect('mqtt://samson.web42.com');
+var mqttBroker = process.env.MQTT_URL || 'mqtt://mqtt.example.com:1883';
+var mqttUsername = process.env.MQTT_USER || '';
+var mqttPassword = process.env.MQTT_PASS || '';
+
+var client = mqtt.connect(mqttBroker, {
+    username: mqttUsername,
+    password: mqttPassword
+});
 
 var pxInd = 0, stInd = 0;
 var rqMsg = 0;
@@ -142,14 +149,26 @@ function uploadImage() {
     return 0;
 }
 
-
-
 client.on('connect', function () {
-    client.subscribe('/display/epd-f3d111/all', function (err) {
+    console.log('Connected to broker');
+    client.subscribe('display/epd-f3d111/all', function (err) {
         if (err) {
             console.log('Error subscribing: ' + err.toString);
         }
     });
+});
+
+client.on('reconnect', function () {
+    console.log('Reconnected to broker');
+    client.subscribe('display/epd-f3d111/all', function (err) {
+        if (err) {
+            console.log('Error subscribing: ' + err.toString);
+        }
+    });
+});
+
+client.on('error', function (err) {
+    console.log('Error connecting to broker: ' + err.toString());
 });
 
 client.on('message', function (topic, message) {
