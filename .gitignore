@@ -8,3 +8,4 @@ display-loader/
 loader/
 epd-loader/node_modules/
 epd-loader/.eslintrc.json
+generate-display-html/node_modules/
