@@ -31,6 +31,7 @@ void sensorsSend() {
     doc["bme680StaticIaq"] = iaqSensor.staticIaq;
     doc["bme680Co2Equivalent"] = iaqSensor.co2Equivalent;
     doc["bme680BreathVocEquivalent"] = iaqSensor.breathVocEquivalent;
+    doc["bme680ConfigTemperatureOffset"] = configTemperatureOffset;
 
     serializeJson(doc, output);
 
