@@ -113,6 +113,7 @@ void networkSetup() {
         macAddress[3],
         macAddress[4],
         macAddress[5]);
+    configMqttTopic = "sensor/" + String(idString);
 
     msgln("Network", "ID/host name: " + String(idString));
 
